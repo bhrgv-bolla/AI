@@ -7,4 +7,8 @@
 # Key Takeaways:
 
 	- Understanding is more important than reasoning. Understanding - 99.9999% where as Reasoning - 00.0001%
-	- 
+
+
+# Todos:
+
+	[] Model free methods.
