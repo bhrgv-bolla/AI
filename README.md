@@ -15,4 +15,4 @@
 
 # Todos:
 
-[] "Model free" methods - explore.
+[ ] "Model free" methods - explore.
