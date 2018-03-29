@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 ################# INSTALL TENSOR FLOW ####################
+USER_DIR=$(echo ~)
+echo USER_DIR : $USER_DIR
 
 check_pip() {
   echo "Checking for pip"
@@ -17,13 +19,12 @@ fi
 
 echo Installing/ Upgrading virtual env
 pip install --upgrade virtualenv > /dev/null
-target_directory='~/tf-virtualenv'
 if [ !$1 ]
 then
-  target_directory='~/tf-virtualenv'
+  target_directory=$USER_DIR/tf-virtualenv
 else
   target_directory=$1
 fi
 echo target directory is $target_directory
-mkdir -p $target_directory
+# mkdir -p $target_directory
 # virtualenv --system-site-packages ~/tf-virtualenv
