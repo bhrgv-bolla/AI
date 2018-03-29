@@ -5,7 +5,7 @@ USER_DIR=$(echo ~)
 echo USER_DIR : $USER_DIR
 
 check_pip() {
-  echo "Checking for pip"
+  echo "CHECKING FOR PIP"
   pip > /dev/null 2> /dev/null && return 0 || return 1
 }
 
@@ -17,14 +17,27 @@ else
   echo pip found
 fi
 
-echo Installing/ Upgrading virtual env
-pip install --upgrade virtualenv > /dev/null
+######## Target directory ###########
+echo INSTALLING/ UPGRADING VIRTUAL ENV
+conda install virtualenv
 if [ !$1 ]
 then
-  target_directory=$USER_DIR/tf-virtualenv
+  TARGET_DIRECTORY=$USER_DIR/tf-virtualenv
 else
-  target_directory=$1
+  TARGET_DIRECTORY=$1
 fi
-echo target directory is $target_directory
-# mkdir -p $target_directory
-# virtualenv --system-site-packages ~/tf-virtualenv
+echo TARGET_DIRECTORY is $TARGET_DIRECTORY
+mkdir -p $TARGET_DIRECTORY
+
+echo ***INSTALLING SYSTEM SITE PACKAGES***
+virtualenv --system-site-packages $TARGET_DIRECTORY
+
+source $TARGET_DIRECTORY/bin/activate
+
+echo UPDATING PIP
+easy_install -U pip
+
+echo ****INSTALLING TENSOR FLOW****
+pip install --upgrade tensorflow
+
+echo SHORTCUT: alias tfenv=source $(TARGET_DIRECTORY)/bin/activate
