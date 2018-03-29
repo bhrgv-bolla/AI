@@ -40,4 +40,4 @@ easy_install -U pip
 echo ****INSTALLING TENSOR FLOW****
 pip install --upgrade tensorflow
 
-echo SHORTCUT: alias tfenv=source $(TARGET_DIRECTORY)/bin/activate
+echo SHORTCUT: alias tfenv=source $TARGET_DIRECTORY/bin/activate
