@@ -3,15 +3,11 @@ from __future__ import print_function
 
 from six.moves import urllib
 import os
-
+from . import directory_util
 
 data_url = 'http://mattmahoney.net/dc/'
 
-tmp_dir = os.path.dirname(os.path.realpath(__file__))  # This file location.
-data_dir = os.path.join(tmp_dir, 'data')
-
-if (not os.path.exists(data_dir)):
-    os.mkdir(data_dir)
+data_dir = directory_util.get_data_dir()
 
 
 def download_data(filename):

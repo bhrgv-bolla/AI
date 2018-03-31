@@ -1,11 +1,18 @@
 """ Implementing word2vec using the skipgram model using a logistic regression
 as probability function. """
-
 import tensorflow as tf
 import numpy as np
+import zipfile
 
 import math
+from . import directory_util
+import os
 
+def read_data(filename):
+    with zipfile.ZipFile(filename) as f:
+        print(f.namelist())
+
+read_data(os.path.join(directory_util.get_data_dir(), 'text8.zip'))
 
 
 def skipgram(vocabulary_size, embedding_size):
