@@ -68,17 +68,15 @@ print 'SAMPLE DATA: ', data[:10], [reverseWordDictionary.get(index) for index in
 def generate_batch(batch_size, window_size, num_skips):
     """Generate a batch for training from the dataset ( data ) TODO what should the output look like"""
     print 'GENERATING BATCH: ', batch_size, window_size, ':', num_skips
-
-
-
-
-
-
+    batch = np.ndarray((batch_size), dtype=np.int32)
+    labels = np.ndarray((batch_size, 1), dtype=np.int32)
+    print batch.shape, labels.shape
 
 
 def skipgram(vocabulary_size, embedding_size):
     """Run skip gram model for a dataset."""
     batch_size = 100 #Run sufficient batch_size until the loss is minimized
+    num_iterations = 1000 #loop for training.
 
     graph = tf.Graph() #To construct a tensorflow Graph
 
@@ -112,3 +110,11 @@ def skipgram(vocabulary_size, embedding_size):
 
         with tf.name_scope('optimizer'):
             optimizer = tf.train.GradientDescentOptimizer(1.0).minimize(loss)
+
+
+    with tf.get_default_session(graph=graph) as session:
+        tf.global_variables_initializer.run()
+        for batch_num in xrange(num_iterations):
+            # TODO More info on num skips
+            inputs, labels = generate_batch(batch_size, window_size=1, num_skips=2)
+
