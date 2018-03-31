@@ -65,6 +65,12 @@ print 'MOST COMMON DATA: ', count[:10]
 print 'SAMPLE DATA: ', data[:10], [reverseWordDictionary.get(index) for index in data[:10]]
 
 
+def generate_batch(batch_size, window_size, num_skips):
+    """Generate a batch for training from the dataset ( data ) TODO what should the output look like"""
+    print 'GENERATING BATCH: ', batch_size, window_size, ':', num_skips
+
+
+
 
 
 
