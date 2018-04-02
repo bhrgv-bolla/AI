@@ -67,7 +67,7 @@ print 'SAMPLE DATA: ', data[:10], [reverseWordDictionary.get(index) for index in
 
 data_index = 0 #global variable to keep track of till where the data was read last time.
 
-def generate_batch(batch_size, window_size, num_skips):
+def generate_batch(batch_size, window_size): #TODO improve generating a batch by using some randomness in the process.
     """
     Generate a batch for training from the dataset ( data )
     :returns
@@ -75,7 +75,6 @@ def generate_batch(batch_size, window_size, num_skips):
     labels: the target/ context words.
     """
     global data_index
-    print 'GENERATING BATCH: ', batch_size, window_size, ':', num_skips
     batch = np.ndarray((batch_size), dtype=np.int32)
     labels = np.ndarray((batch_size, 1), dtype=np.int32)
     current_batch_index = 0
@@ -83,15 +82,15 @@ def generate_batch(batch_size, window_size, num_skips):
         if data_index + 2*window_size >= len(data):
             data_index = 0
         center_word_index = data_index + window_size
-        context_word_indices = [index for index in range(data_index, data_index+2*window_size) if index != center_word_index]
+        context_word_indices = [index for index in range(data_index, data_index+2*window_size + 1) if index != center_word_index]
         print center_word_index, context_word_indices
         for context_word_index in context_word_indices:
             batch[current_batch_index] = data[center_word_index]
-            labels[current_batch_index] = data[context_word_index]
+            labels[current_batch_index, 0] = data[context_word_index]
             current_batch_index += 1
-            if current_batch_index >= len(data):
+            if current_batch_index >= batch_size:
                 break
-        if current_batch_index >= len(data):
+        if current_batch_index >= batch_size:
             break
         # Shift the window by 1
         data_index += 1
