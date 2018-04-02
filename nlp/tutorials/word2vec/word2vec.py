@@ -65,12 +65,37 @@ print 'MOST COMMON DATA: ', count[:10]
 print 'SAMPLE DATA: ', data[:10], [reverseWordDictionary.get(index) for index in data[:10]]
 
 
+data_index = 0 #global variable to keep track of till where the data was read last time.
+
 def generate_batch(batch_size, window_size, num_skips):
-    """Generate a batch for training from the dataset ( data ) TODO what should the output look like"""
+    """
+    Generate a batch for training from the dataset ( data )
+    :returns
+    data: The data / center words.
+    labels: the target/ context words.
+    """
+    global data_index
     print 'GENERATING BATCH: ', batch_size, window_size, ':', num_skips
     batch = np.ndarray((batch_size), dtype=np.int32)
     labels = np.ndarray((batch_size, 1), dtype=np.int32)
-    print batch.shape, labels.shape
+    current_batch_index = 0
+    for batch_index in range(batch_size): #These many elements are required in both the batch and labels.
+        if data_index + 2*window_size >= len(data):
+            data_index = 0
+        center_word_index = data_index + window_size
+        context_word_indices = [index for index in range(data_index, data_index+2*window_size) if index != center_word_index]
+        print center_word_index, context_word_indices
+        for context_word_index in context_word_indices:
+            batch[current_batch_index] = data[center_word_index]
+            labels[current_batch_index] = data[context_word_index]
+            current_batch_index += 1
+            if current_batch_index >= len(data):
+                break
+        if current_batch_index >= len(data):
+            break
+        # Shift the window by 1
+        data_index += 1
+    return batch, labels
 
 
 def skipgram(vocabulary_size, embedding_size):

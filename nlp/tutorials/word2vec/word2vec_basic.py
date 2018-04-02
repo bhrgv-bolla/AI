@@ -137,11 +137,13 @@ def generate_batch(batch_size, num_skips, skip_window):
   buffer.extend(data[data_index:data_index + span])
   data_index += span
   for i in range(batch_size // num_skips):
-    context_words = [w for w in range(span) if w != skip_window]
-    words_to_use = random.sample(context_words, num_skips)
+    context_words = [w for w in range(span) if w != skip_window] # Target word or center word.
+    words_to_use = random.sample(context_words, num_skips) # TODO why random sample for what. words_to_use; randomly generate batch, even based on num_skips??
     for j, context_word in enumerate(words_to_use):
-      batch[i * num_skips + j] = buffer[skip_window]
-      labels[i * num_skips + j, 0] = buffer[context_word]
+      batch[i * num_skips + j] = buffer[skip_window] # This is the center word.
+      labels[i * num_skips + j, 0] = buffer[context_word] # All Context words. Combinations.
+
+    # Shift buffer. So for window 1 the new center word will be the previous context word. goal is to create batch and labels of 
     if data_index == len(data):
       buffer.extend(data[0:span])
       data_index = span
