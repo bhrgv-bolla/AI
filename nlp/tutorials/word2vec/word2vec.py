@@ -100,8 +100,8 @@ def generate_batch(batch_size, window_size):  # TODO improve generating a batch 
 
 def skipgram(vocabulary_size=50000, embedding_size=128):
     """Run skip gram model for a dataset."""
-    batch_size = 100  # Run sufficient batch_size until the loss is minimized
-    num_iterations = 10000  # loop for training.
+    batch_size = 128  # Run sufficient batch_size until the loss is minimized
+    num_iterations = 100000  # loop for training.
 
     graph = tf.Graph()  # To construct a tensorflow Graph
 
@@ -130,7 +130,7 @@ def skipgram(vocabulary_size=50000, embedding_size=128):
             loss = tf.reduce_mean(tf.nn.nce_loss(weights=nce_weights,
                                                  biases=nce_biases,
                                                  labels=train_labels,
-                                                 inputs=embed, # Optimize these embeddings from
+                                                 inputs=embed,  # Optimize these embeddings from
                                                  num_sampled=64,  # Number of negatives to sample.
                                                  num_classes=vocabulary_size))
 
