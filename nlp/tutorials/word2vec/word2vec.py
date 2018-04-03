@@ -12,7 +12,6 @@ import collections
 dataset_name = 'text8.zip'
 
 
-
 def read_data(filename):
     """ Step 1 Read data. """
     filepath = os.path.join(directory_util.get_data_dir(), dataset_name)
@@ -23,14 +22,15 @@ def read_data(filename):
             print 'SAMPLE CONTENTS OF FILE', contents[:100]
         except:
             print '!!CANNOT PRINT SAMPLE'
-        data = tf.compat.as_str(contents).split() # TODO what is package compat?
+        data = tf.compat.as_str(contents).split()  # TODO what is package compat?
         return data
+
 
 download.download_data(dataset_name)
 vocabulary = read_data(dataset_name)
-vocabulary_size = len(vocabulary) # Taking all the words in the vocabulary!
+vocabulary_size = len(vocabulary)  # Taking all the words in the vocabulary!
 print 'VOCABULARY SIZE: ', vocabulary_size, 'SAMPLE', vocabulary[:10]
-vocabulary_size = 50000 # change so that you only take part of it.
+vocabulary_size = 50000  # change so that you only take part of it.
 
 
 def build_dataset(vocabulary, vocabulary_size):
@@ -47,27 +47,28 @@ def build_dataset(vocabulary, vocabulary_size):
     data = []
     unknown_count = 0
     for word in vocabulary:
-        index = wordDictionary.get(word, 0) # Rare words. TODO dig into this.
-        if(index == 0):
+        index = wordDictionary.get(word, 0)  # Rare words. TODO dig into this.
+        if (index == 0):
             unknown_count += 1
         data.append(index)
     count[0][1] = unknown_count
     reverseWordDictionary = dict(zip(wordDictionary.values(), wordDictionary.keys()))
     return data, count, wordDictionary, reverseWordDictionary
 
-#reverseWordDictionary => Index to Word mapping.
-#wordDictionary => Name to Index mapping
-#count = Top vocabulary_size-1 common words. (Unkown is one of them)
-#data = The original data mapped to integers. ( If there is a word that doesn't exist in the map; the data integer would be 0)
+
+# reverseWordDictionary => Index to Word mapping.
+# wordDictionary => Name to Index mapping
+# count = Top vocabulary_size-1 common words. (Unkown is one of them)
+# data = The original data mapped to integers. ( If there is a word that doesn't exist in the map; the data integer would be 0)
 data, count, wordDictionary, reverseWordDictionary = build_dataset(vocabulary, vocabulary_size)
-del vocabulary # Don't need the vocabulary any more. Since the dictionary are there.
+del vocabulary  # Don't need the vocabulary any more. Since the dictionary are there.
 print 'MOST COMMON DATA: ', count[:10]
 print 'SAMPLE DATA: ', data[:10], [reverseWordDictionary.get(index) for index in data[:10]]
 
+data_index = 0  # global variable to keep track of till where the data was read last time.
 
-data_index = 0 #global variable to keep track of till where the data was read last time.
 
-def generate_batch(batch_size, window_size): #TODO improve generating a batch by using some randomness in the process.
+def generate_batch(batch_size, window_size):  # TODO improve generating a batch by using some randomness in the process.
     """
     Generate a batch for training from the dataset ( data )
     :returns
@@ -78,12 +79,12 @@ def generate_batch(batch_size, window_size): #TODO improve generating a batch by
     batch = np.ndarray((batch_size), dtype=np.int32)
     labels = np.ndarray((batch_size, 1), dtype=np.int32)
     current_batch_index = 0
-    for batch_index in range(batch_size): #These many elements are required in both the batch and labels.
-        if data_index + 2*window_size >= len(data):
+    for batch_index in range(batch_size):  # These many elements are required in both the batch and labels.
+        if data_index + 2 * window_size >= len(data):
             data_index = 0
         center_word_index = data_index + window_size
-        context_word_indices = [index for index in range(data_index, data_index+2*window_size + 1) if index != center_word_index]
-        print center_word_index, context_word_indices
+        context_word_indices = [index for index in range(data_index, data_index + 2 * window_size + 1) if
+                                index != center_word_index]
         for context_word_index in context_word_indices:
             batch[current_batch_index] = data[center_word_index]
             labels[current_batch_index, 0] = data[context_word_index]
@@ -97,48 +98,51 @@ def generate_batch(batch_size, window_size): #TODO improve generating a batch by
     return batch, labels
 
 
-def skipgram(vocabulary_size, embedding_size):
+def skipgram(vocabulary_size=50000, embedding_size=128):
     """Run skip gram model for a dataset."""
-    batch_size = 100 #Run sufficient batch_size until the loss is minimized
-    num_iterations = 1000 #loop for training.
+    batch_size = 100  # Run sufficient batch_size until the loss is minimized
+    num_iterations = 10000  # loop for training.
 
-    graph = tf.Graph() #To construct a tensorflow Graph
+    graph = tf.Graph()  # To construct a tensorflow Graph
 
     with graph.as_default():
         with tf.name_scope('inputs'):
-            # Placeholders for inputs.
+            # Placeholders for inputs center word (Center words) => context words
+            # (labels / what this model is trying to adjust to).
             train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
             train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
 
         with tf.device('/cpu:0'):
-            with tf.name_scode('embeddings'):
+            with tf.name_scope('embeddings'):
                 # Get embedding
-                embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size],
+                embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size],  # Word vectors.
                                                            -1.0, 1.0))
-                embed = tf.nn.embedding_lookup(embeddings, train_inputs)
+                embed = tf.nn.embedding_lookup(embeddings, train_inputs)  # Retrieve the embeddings for the input
 
             with tf.name_scope('weights'):
                 nce_weights = tf.Variable(tf.truncated_normal([vocabulary_size, embedding_size],
-                                                              stddev=1.0/math.sqrt(embedding_size)))
+                                                              stddev=1.0 / math.sqrt(embedding_size)))
 
             with tf.name_scope('biases'):
                 nce_biases = tf.Variable(tf.zeros([vocabulary_size]))
 
         with tf.name_scope('loss'):
             loss = tf.reduce_mean(tf.nn.nce_loss(weights=nce_weights,
-             biases=nce_biases,
-             labels=train_labels,
-             inputs=embed,
-             # num_sampled=num_sampled,
-             num_classes=vocabulary_size))
+                                                 biases=nce_biases,
+                                                 labels=train_labels,
+                                                 inputs=embed, # Optimize these embeddings from
+                                                 num_sampled=64,  # Number of negatives to sample.
+                                                 num_classes=vocabulary_size))
 
         with tf.name_scope('optimizer'):
             optimizer = tf.train.GradientDescentOptimizer(1.0).minimize(loss)
 
-
-    with tf.get_default_session(graph=graph) as session:
-        tf.global_variables_initializer.run()
+    with tf.Session(graph=graph) as session:
+        tf.global_variables_initializer().run()
         for batch_num in xrange(num_iterations):
-            # TODO More info on num skips
-            inputs, labels = generate_batch(batch_size, window_size=1, num_skips=2)
-
+            inputs, labels = generate_batch(batch_size, window_size=1)
+            _, current_loss, current_embeddings = session.run([optimizer, loss, embeddings], feed_dict={
+                train_inputs: inputs,
+                train_labels: labels
+            })
+            print 'LOSS', current_loss
