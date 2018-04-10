@@ -1,10 +1,7 @@
-Definitions (Review) |
+Definitions (Review) |explanation
 ---------------------|-----------------------
 Gradient             | Fancy word for derivate, rate of change of a function; a direction to move.                                                              
-Optimizer            | use Gradient and move in that direction only a tiny bit as dictated by the learning rate ( Choose less ; don't choose too big learning rate ) 
-
-
-
+Optimizer            | use Gradient and move in that direction only a tiny bit as dictated by the learning rate ( Choose less ; don't choose too big learning rate )
 
 
 ## Gradients Variables
