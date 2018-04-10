@@ -4,6 +4,55 @@ Gradient             | Fancy word for derivate, rate of change of a function; a 
 Optimizer            | use Gradient and move in that direction only a tiny bit as dictated by the learning rate ( Choose less ; don't choose too big learning rate )
 
 
+## Model Prediction. -- output.
+
+- Why is the output of a model a 32, 3 shape??
+- Remember the batch size is 32.
+- Each row is the prediction for one training example.
+- Now take the argmax across the axis 1.
+- axis 0 armax will have 3 and will be a 1*3 matrix.
+- axis 1 will have 32 values and will be a 32*1 matrix
+
+model :  tf.Tensor(
+[[ -6.6298895    2.183896    -3.2696886 ]
+ [ -5.7661633    3.8444457   -6.513825  ]
+ [ -3.7724771    3.3471828   -6.2086725 ]
+ [ -6.6077237    2.3105197   -3.448086  ]
+ [ -5.4578547    2.8828125   -4.5123067 ]
+ [  9.478563     1.8815695  -18.20993   ]
+ [ -9.555464    -1.7640237    4.383809  ]
+ [ -3.2620893    3.463873    -6.9337363 ]
+ [ 10.453476     1.941795   -19.850473  ]
+ [ -8.630677    -0.13088948   1.147879  ]
+ [  9.504435     1.6420585  -17.726652  ]
+ [  9.90695      1.6529304  -18.242886  ]
+ [ -5.8692255    3.1071606   -5.0588217 ]
+ [ -4.4988856    3.5281148   -5.9980426 ]
+ [ -9.748803    -1.384615     3.747344  ]
+ [ -9.193669    -0.7803719    2.4459553 ]
+ [ 10.058613     1.6762367  -18.58511   ]
+ [ -7.818387     1.1761158   -1.275997  ]
+ [ -9.694063    -1.692708     3.9399738 ]
+ [ 10.466317     1.7469054  -19.383963  ]
+ [ -5.310121     2.9575157   -4.7103696 ]
+ [ -4.9935207    3.2822218   -5.3651366 ]
+ [ -6.5669384    2.5741544   -3.6497388 ]
+ [ 10.058613     1.6762367  -18.58511   ]
+ [ -9.905254    -0.71331656   3.0542321 ]
+ [ 10.568571     1.7398487  -19.560041  ]
+ [ -6.8602667    1.2232395   -1.1913673 ]
+ [-10.756088    -2.6240292    5.3447127 ]
+ [ -5.0841894    3.7435641   -6.734354  ]
+ [-11.327055    -3.369378     6.0106654 ]
+ [-13.389656    -3.96517      7.1136656 ]
+ [ -9.932562    -1.9401039    4.5578136 ]], shape=(32, 3), dtype=float32)
+
+
+## argmax - Index of the highest value in the model's prediction for each sample input ( here 32 sample inputs. )
+argmax tf.Tensor([2 0 1 0 1 0 1 0 1 0 2 2 0 0 0 2 1 2 0 2 1 0 0 1 2 2 1 0 0 2 1 1], shape=(32,), dtype=int32)
+
+
+
 ## Gradients Variables
 
 Gradients after the learning from the first sample.
