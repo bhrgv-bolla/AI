@@ -17,3 +17,4 @@
 
 - [ ] "Model free" methods - explore.
 - [ ] Setup atom sync settings configuration - https://atom.io/packages/sync-settings
+- [ ] GAN - Generative Adversial Networks -- Ian Goodfellow.
